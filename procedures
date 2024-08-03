@@ -1,0 +1,43 @@
+#1
+CREATE PROCEDURE GetMaxQuantity()
+BEGIN
+    SELECT MAX(Quantity) AS MaxQuantity FROM Orders;
+END;
+
+#2
+ALTER TABLE Bookings MODIFY COLUMN BookingID INT AUTO_INCREMENT PRIMARY KEY;
+CREATE PROCEDURE AddValidBooking(IN InBookingDate DATE, IN InTableNo INT, OUT BookingStatus VARCHAR(50))
+BEGIN
+    DECLARE Count INT;
+    SELCT COUNT(BookingID) INTO Count FROM Bookings
+    WHERE BookingDate = InBookingDate AND TableNo = InTableNo;
+
+    IF Count > 0 THEN
+        SET BookingStatus = 'Table already booked';
+    ELSE
+        INSERT INTO Bookings (BookingDate, TableNo) VALUES
+            (InBookingDate, TableNo);
+        SET BookingDtatus = 'Booking Added';
+    END IF;
+END;
+
+#3
+CREATE PROCEDURE AddBookings (IN InBookingID INT, IN InBookingDate DATE, IN InTableNo INT, IN InCustomerID INT)
+BEGIN
+    INSERT INTO Bookings (BookingID, BookingDate, TableNo, CustomerID) VALUES
+        (InBookingID, InBookingDate, InTableNo, InCustomerID);
+END
+
+#4
+CREATE PROCEDURE UpdateBooking (IN InBookingID INT, IN InBookingDate DATE)
+BEGIN
+    UPDATE Bookings
+    SET BookingDate = InBookingDate
+    WHERE BookingID = InBookingID
+END
+
+#5
+CREATE PROCEDURE CancelBooking (IN InBookingID INT)
+BEGIN
+    DELETE FROM Bookings WHERE BookingID = InBookingID
+END
